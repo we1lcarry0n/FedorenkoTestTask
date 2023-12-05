@@ -7,12 +7,19 @@ public class PlayerControls : MonoBehaviour
     private BulletObjectPool bulletPool;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
+    private PlayerHealth playerHealth;
 
     [SerializeField] private float projectileOffsetMultiplier;
     [SerializeField] private float shootTimerOffset;
     [SerializeField] private float shootCooldown;
 
     private float shotTimePast = 0;
+    private bool isAlive;
+
+    private void Awake()
+    {
+        playerHealth = GetComponent<PlayerHealth>();
+    }
 
     private void Start()
     {
@@ -20,10 +27,16 @@ public class PlayerControls : MonoBehaviour
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         shotTimePast = shootCooldown;
+        isAlive = true;
+        playerHealth.OnDieEvent += Death;
     }
 
     private void Update()
     {
+        if (!isAlive)
+        {
+            return;
+        }
         shotTimePast += Time.deltaTime;
         if (shotTimePast < shootCooldown )
         {
@@ -56,5 +69,12 @@ public class PlayerControls : MonoBehaviour
         bullet.transform.position = transform.position + Vector3.right * direction * projectileOffsetMultiplier;
         bullet.SetActive(true);
     }
+
+    private void Death(object sender, System.EventArgs e)
+    {
+        isAlive = false;
+        animator.SetBool("dead", true);
+    }
+
 
 }
