@@ -18,10 +18,14 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float attackDamage;
 
     private bool isAlive;
+    private bool isInAttackRange;
     private float moveDirection;
+    private float timeSinceLastAttack;
 
     private void OnEnable()
     {
+        timeSinceLastAttack = attackCooldown;
+        isInAttackRange = false;
         enemyCollider.enabled = true;
         health.ResetHealth();
         isAlive = true;
@@ -46,16 +50,39 @@ public class EnemyAI : MonoBehaviour
         {
             return;
         }
+        Move();
+        TryAttack();
     }
 
     private void Move()
     {
-
+        if (!isInAttackRange)
+        {
+            transform.position += new Vector3(movementSpeed * Time.deltaTime, 0, 0);
+            if (Vector3.Distance(transform.position, player.transform.position) <= attackRange)
+            {
+                isInAttackRange = true;
+            }
+        }
     }
 
-    private void Attack()
+    private void TryAttack()
     {
+        if (!isInAttackRange)
+        {
+            return;
+        }
+        if (timeSinceLastAttack > attackCooldown)
+        {
+            animator.SetBool("attacking", true);
+            timeSinceLastAttack = 0;
+        }
+        timeSinceLastAttack += Time.deltaTime;
+    }
 
+    public void Attack()  //animation event
+    {
+        player.TakeDamage(attackDamage);
     }
 
     private void Death(object sender, System.EventArgs e)
@@ -64,6 +91,7 @@ public class EnemyAI : MonoBehaviour
         enemyCollider.enabled = false;
         deathParticles.Play();
         animator.SetBool("dead", true);
+        GameManager.Instance.AddKill();
         StartCoroutine(ReturnToPoolRoutine());
     }
 
