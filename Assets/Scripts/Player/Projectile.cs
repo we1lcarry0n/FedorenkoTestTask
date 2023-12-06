@@ -17,6 +17,16 @@ public class Projectile : MonoBehaviour
         SetTarget(transform.position.x);
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.TryGetComponent<Health>(out Health health))
+        {
+            health.TakeDamage(projectileDamageAmount);
+            StopAllCoroutines();
+            gameObject.SetActive(false);
+        }
+    }
+
     private void SetTarget(float xPosition)
     {
         rb2d.velocity = Vector3.right * Mathf.Sign(xPosition) * projectileSpeed;
@@ -29,4 +39,5 @@ public class Projectile : MonoBehaviour
         rb2d.velocity = Vector3.zero;
         gameObject.SetActive(false);
     }
+
 }
