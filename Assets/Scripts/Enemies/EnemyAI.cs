@@ -58,7 +58,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (!isInAttackRange)
         {
-            transform.position += new Vector3(movementSpeed * Time.deltaTime, 0, 0);
+            transform.position += new Vector3(movementSpeed * -moveDirection * Time.deltaTime, 0, 0);
             if (Vector3.Distance(transform.position, player.transform.position) <= attackRange)
             {
                 isInAttackRange = true;

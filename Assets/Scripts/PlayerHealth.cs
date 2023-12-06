@@ -9,6 +9,10 @@ public class PlayerHealth : Health
 
     public override void TakeDamage(float damage)
     {
+        if (health == 0)
+        {
+            return;
+        }
         base.TakeDamage(damage);
         healthBar.fillAmount = health / maxHealth;
     }

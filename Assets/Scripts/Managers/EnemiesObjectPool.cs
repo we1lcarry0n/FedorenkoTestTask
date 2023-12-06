@@ -20,7 +20,7 @@ public class EnemiesObjectPool : MonoBehaviour
 
         for (int i = 0; i < enemiesToInstantiate; i++)
         {
-            enemy = Instantiate(enemyPrefabs[i < enemiesToInstantiate/2 ? 0 : 1], transform.position, Quaternion.identity, this.transform);
+            enemy = Instantiate(enemyPrefabs[i % 2 == 0 ? 0 : 1], transform.position, Quaternion.identity, this.transform);
             enemy.SetActive(false);
             poolingList.Add(enemy);
         }
@@ -48,8 +48,14 @@ public class EnemiesObjectPool : MonoBehaviour
         }
         else
         {
-            int eliteIndex = Random.Range(0, 1) < .5f ? enemiesToInstantiate : enemiesToInstantiate+1;
-            return poolingList[eliteIndex];
+            if (!poolingList[enemiesToInstantiate].activeInHierarchy)
+            {
+                return poolingList[enemiesToInstantiate];
+            }
+            else
+            {
+                return poolingList[enemiesToInstantiate+1];
+            }
         }
     }
 

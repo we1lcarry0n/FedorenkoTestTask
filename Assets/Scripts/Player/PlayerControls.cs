@@ -7,6 +7,7 @@ public class PlayerControls : MonoBehaviour
     private BulletObjectPool bulletPool;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
+    private AudioSource audioSource;
     private PlayerHealth playerHealth;
 
     [SerializeField] private float projectileOffsetMultiplier;
@@ -26,6 +27,7 @@ public class PlayerControls : MonoBehaviour
         bulletPool = BulletObjectPool.Instance;
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        audioSource = GetComponent<AudioSource>();
         shotTimePast = shootCooldown;
         isAlive = true;
         playerHealth.OnDieEvent += Death;
@@ -60,6 +62,7 @@ public class PlayerControls : MonoBehaviour
     {
         spriteRenderer.flipX = direction > 0 ? false : true;
         animator.SetTrigger("shoot");
+        audioSource.Play();
     }
 
     private IEnumerator SetProjectileRoutine(float direction)
